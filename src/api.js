@@ -10,7 +10,7 @@ const roomsRoutes = require('./routes/habitaciones');
 //const paymentMethodsRoutes = require('./routes/paymentMethods');
 //const paymentsRoutes = require('./routes/payments');
 //const roomPhotosRoutes = require('./routes/roomPhotos');
-//const notificationsRoutes = require('./routes/notifications');
+const notificacionesRoutes = require('./routes/notificaciones');
 
 const app = express();
 
@@ -27,13 +27,13 @@ const swaggerUI = require("swagger-ui-express");
 // Montamos las rutas
 app.use('/roles', rolesRoutes);
 app.use('/usuarios', usersRoutes);
-app.use('/rooms', roomsRoutes);
+app.use('/cuartos', roomsRoutes);
 //app.use('/seasons', seasonsRoutes);
 //app.use('/reservations', reservationsRoutes);
 //app.use('/paymentMethods', paymentMethodsRoutes);
 //app.use('/payments', paymentsRoutes);
 //app.use('/roomPhotos', roomPhotosRoutes);
-//app.use('/notifications', notificationsRoutes);
+app.use('/notificationes', notificationsRoutes);
 
 const port = process.env.PORT || 8090;
 app.listen(port, () => {
