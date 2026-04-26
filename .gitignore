@@ -11,3 +11,6 @@ npm-debug.log*
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Configuracion de Editor
+.vscode/
