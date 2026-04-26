@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const rolesRoutes = require('./routes/roles');
 const usersRoutes = require('./routes/usuarios');
-//const roomsRoutes = require('./routes/rooms');
+const roomsRoutes = require('./routes/habitaciones');
 //const seasonsRoutes = require('./routes/seasons');
 //const reservationsRoutes = require('./routes/reservations');
 //const paymentMethodsRoutes = require('./routes/paymentMethods');
@@ -27,7 +27,7 @@ const swaggerUI = require("swagger-ui-express");
 // Montamos las rutas
 app.use('/roles', rolesRoutes);
 app.use('/usuarios', usersRoutes);
-//app.use('/rooms', roomsRoutes);
+app.use('/rooms', roomsRoutes);
 //app.use('/seasons', seasonsRoutes);
 //app.use('/reservations', reservationsRoutes);
 //app.use('/paymentMethods', paymentMethodsRoutes);
