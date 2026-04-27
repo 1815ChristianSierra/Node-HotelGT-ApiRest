@@ -9,7 +9,7 @@ const seasonsRoutes = require('./routes/temporadas');
 const reservationsRoutes = require('./routes/reservaciones');
 //const paymentMethodsRoutes = require('./routes/paymentMethods');
 //const paymentsRoutes = require('./routes/payments');
-//const roomPhotosRoutes = require('./routes/roomPhotos');
+const roomPhotosRoutes = require('./routes/habitacionesfotos');
 const notificacionesRoutes = require('./routes/notificaciones');
 
 const app = express();
@@ -32,8 +32,8 @@ app.use('/seasons', seasonsRoutes);
 app.use('/reservaciones', reservationsRoutes);
 //app.use('/paymentMethods', paymentMethodsRoutes);
 //app.use('/payments', paymentsRoutes);
-//app.use('/roomPhotos', roomPhotosRoutes);
-app.use('/notificationes', notificationsRoutes);
+app.use('/roomPhotos', roomPhotosRoutes);
+app.use('/notificaciones', notificacionesRoutes);
 
 const port = process.env.PORT || 8090;
 app.listen(port, () => {
