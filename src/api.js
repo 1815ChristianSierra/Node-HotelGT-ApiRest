@@ -7,8 +7,8 @@ const usersRoutes = require('./routes/usuarios');
 const roomsRoutes = require('./routes/habitaciones');
 const seasonsRoutes = require('./routes/temporadas');
 const reservationsRoutes = require('./routes/reservaciones');
-//const paymentMethodsRoutes = require('./routes/paymentMethods');
-//const paymentsRoutes = require('./routes/payments');
+const paymentMethodsRoutes = require('./routes/pagosmetodos');
+const paymentsRoutes = require('./routes/pagos');
 const roomPhotosRoutes = require('./routes/habitacionesfotos');
 const notificacionesRoutes = require('./routes/notificaciones');
 
@@ -30,8 +30,8 @@ app.use('/usuarios', usersRoutes);
 app.use('/cuartos', roomsRoutes);
 app.use('/seasons', seasonsRoutes);
 app.use('/reservaciones', reservationsRoutes);
-//app.use('/paymentMethods', paymentMethodsRoutes);
-//app.use('/payments', paymentsRoutes);
+app.use('/paymentMethods', paymentMethodsRoutes);
+app.use('/payments', paymentsRoutes);
 app.use('/roomPhotos', roomPhotosRoutes);
 app.use('/notificaciones', notificacionesRoutes);
 
