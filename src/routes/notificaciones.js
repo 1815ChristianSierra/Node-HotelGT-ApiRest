@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const notificacionesController = require('../controllers/notificacioneController');
+const notificacionesController = require('../controllers/notificacionesController');
 const { success, error } = require('../utils/response');
 
 // GET /notifications

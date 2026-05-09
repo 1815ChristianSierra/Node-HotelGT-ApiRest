@@ -31,9 +31,9 @@ router.get('/:id', async (req, res) => {
 // POST /users → crear usuario
 router.post('/', async (req, res) => {
     try {
-        const { name, email, password_hash, rol_id } = req.body;
-        if (!name || !email || !password_hash || !rol_id) {
-            return error(res, 'Los campos name, email, password_hash y rol_id son obligatorios', 400);
+        const { name, email, password, rol_id } = req.body;
+        if (!name || !email || !password || !rol_id) {
+            return error(res, 'Los campos name, email, password y rol_id son obligatorios', 400);
         }
         const result = await usuariosController.insertUser(req.body);
         return success(res, 'Usuario creado correctamente', { id: result.insertId }, 201);

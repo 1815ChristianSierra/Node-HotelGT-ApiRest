@@ -3,7 +3,7 @@ class Usuario {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password_hash = password_hash;
+        this.password = password_hash;
         this.rol_id = rol_id;
         this.phone = phone;
         this.is_active = is_active;

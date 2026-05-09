@@ -44,9 +44,9 @@ async function insertUser(usuario) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            `INSERT INTO users (name, email, password_hash, rol_id, phone, is_active, created_at, updated_at)
+            `INSERT INTO users (name, email, password, rol_id, phone, is_active, created_at, updated_at)
              VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-            [usuario.name, usuario.email, usuario.password_hash, usuario.rol_id, usuario.phone, usuario.is_active ?? 1]
+            [usuario.name, usuario.email, usuario.password, usuario.rol_id, usuario.phone, usuario.is_active ?? 1]
         );
         await connection.end();
         return result;
