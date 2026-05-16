@@ -98,8 +98,9 @@ async function updateRoom(room) {
 async function deleteRoom(id) {
     try {
         const connection = await mysql.createConnection(db);
+
         const [result] = await connection.query(
-            "DELETE FROM rooms WHERE id = ?",
+            "UPDATE rooms SET status = 'inactiva' WHERE id = ?",
             [id]
         );
         await connection.end();
