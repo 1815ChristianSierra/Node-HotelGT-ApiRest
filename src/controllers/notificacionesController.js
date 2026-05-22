@@ -6,10 +6,8 @@ async function getNotifications() {
     try {
         const connection = await mysql.createConnection(db);
         const [rows] = await connection.query(
-            `SELECT n.*, r.reservation_code, u.name AS usuario_nombre
+            `SELECT n.title, n.message, n.created_at
              FROM notifications n
-             INNER JOIN reservations r ON n.reservation_id = r.id
-             INNER JOIN users u ON n.user_id = u.id
              ORDER BY n.created_at DESC`
         );
         await connection.end();
@@ -61,7 +59,7 @@ async function insertNotification(notification) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            `INSERT INTO notifications (reservation_id, user_id, type, channel, status, created_at)
+            `INSERT INTO notifications2 (reservation_id, user_id, type, channel, status, created_at)
              VALUES (?, ?, ?, ?, ?, NOW())`,
             [notification.reservation_id, notification.user_id,
              notification.type, notification.channel ?? 'email', notification.status ?? 'pending']
@@ -79,7 +77,7 @@ async function markAsSent(id) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            `UPDATE notifications SET status = 'sent', sent_at = NOW() WHERE id = ?`,
+            `UPDATE notifications2 SET status = 'sent', sent_at = NOW() WHERE id = ?`,
             [id]
         );
         await connection.end();
@@ -95,7 +93,7 @@ async function deleteNotification(id) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            "DELETE FROM notifications WHERE id = ?",
+            "DELETE FROM notifications2 WHERE id = ?",
             [id]
         );
         await connection.end();

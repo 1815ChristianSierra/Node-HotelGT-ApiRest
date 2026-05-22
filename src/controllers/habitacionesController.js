@@ -126,7 +126,7 @@ async function insertRoom(room) {
     );
     // Notificación
     await connection.query(
-      `INSERT INTO notifications2 (
+      `INSERT INTO notifications (
                 user_id,
                 title,
                 message

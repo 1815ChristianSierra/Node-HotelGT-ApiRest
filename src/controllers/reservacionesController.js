@@ -189,10 +189,10 @@ async function insertReservation(reservation) {
  
         // Insertar notificación al usuario que creó la reservación
         await connection.query(
-            `INSERT INTO notifications2 (user_id, title, message)
+            `INSERT INTO notifications (user_id, title, message)
              VALUES (?, ?, ?)`,
             [
-                reservation.created_by,
+                1, // Aquí podrías usar el ID del usuario que creó la reservación
                 'Nueva reservación',
                 `Se creó la reservación ${reservationCode}`
             ]
