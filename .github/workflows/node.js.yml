@@ -1,31 +1,166 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
-
+name: Node.js API — CI/CD Pipeline
+ 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [develop]
   pull_request:
-    branches: [ "develop" ]
-
+    branches: [develop]
+ 
 jobs:
-  build:
-
+  # ─────────────────────────────────────────────────────────────────
+  # JOB 1 — Lint & análisis estático
+  # ─────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint (ESLint)
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+ 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - name: Checkout código
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+ 
+      - name: Instalar dependencias
+        run: npm ci
+ 
+      - name: Ejecutar ESLint
+        run: npx eslint "**/*.js" --ignore-pattern "node_modules/" --ignore-pattern "coverage/"
+ 
+  # ─────────────────────────────────────────────────────────────────
+  # JOB 2 — Pruebas unitarias (sin BD — con mocks de mysql2)
+  # ─────────────────────────────────────────────────────────────────
+  unit-tests:
+    name: Pruebas Unitarias (Jest)
+    runs-on: ubuntu-latest
+    needs: lint
+ 
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+ 
+      - name: Instalar dependencias
+        run: npm ci
+ 
+      - name: Ejecutar pruebas unitarias con cobertura
+        run: npx jest tests/unit --coverage --coverageThreshold='{"global":{"lines":60}}' --forceExit
+ 
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-unit-coverage-report
+          path: coverage/
+          retention-days: 7
+ 
+      - name: Final status
+        run: echo "✅ Unit tests passed"
+ 
+  # ─────────────────────────────────────────────────────────────────
+  # JOB 3 — Pruebas de integración (con MySQL real)
+  # ─────────────────────────────────────────────────────────────────
+  integration-tests:
+    name: Pruebas de Integración (MySQL)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+ 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: hotel_laravel
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+ 
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+ 
+      - name: Instalar dependencias
+        run: npm ci
+ 
+      - name: Esperar MySQL y cargar schema
+        run: |
+          until mysqladmin ping -h 127.0.0.1 --silent; do
+            echo "Esperando MySQL..."; sleep 2;
+          done
+          mysql -h 127.0.0.1 -u root hotel_laravel < database/Hotel-Laravel_Script_-_Version2.sql
+ 
+      - name: Ejecutar pruebas de integración
+        run: npx jest tests/integration --forceExit
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: hotel_laravel
+          DB_USER: root
+          DB_PASSWORD: ""
+ 
+      - name: Final status
+        run: echo "✅ Integration tests passed"
+ 
+  # ─────────────────────────────────────────────────────────────────
+  # JOB 4 — Deploy (se activa solo en push a develop)
+  # ─────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy API Node.js
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+ 
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+ 
+      - name: Instalar dependencias de producción
+        run: npm ci --omit=dev
+ 
+      # ── Descomenta y configura según tu proveedor de deploy ──
+      # Opción A: DigitalOcean App Platform
+      # - name: Deploy a DigitalOcean
+      #   uses: digitalocean/app_action@v1.1.5
+      #   with:
+      #     app_name: lumina-rural-api
+      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+ 
+      # Opción B: SSH a VPS
+      # - name: Deploy vía SSH
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       cd /var/www/lumina-api
+      #       git pull origin develop
+      #       npm ci --omit=dev
+      #       pm2 restart lumina-api
+ 
+      - name: Deploy placeholder
+        run: echo "🚀 Deploy step — configura tu proveedor en este job"
