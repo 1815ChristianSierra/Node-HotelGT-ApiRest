@@ -93,7 +93,6 @@ async function insertRoom(room) {
     const roomId = result.insertId;
 
     // Auditoría
-    // Auditoría
     await connection.query(
       `INSERT INTO audit_logs (
         user_id,

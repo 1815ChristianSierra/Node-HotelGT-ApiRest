@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "main": "src/api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/api.js"
+    "start": "nodemon src/api.js",
+    "test": "jest --forceExit",
+    "test:unit": "jest tests/unit --coverage --forceExit",
+    "test:integration": "jest tests/integration --forceExit",
+    "lint": "eslint \"**/*.js\" --ignore-pattern node_modules/ --ignore-pattern coverage/"
   },
   "dependencies": {
     "body-parser": "^2.2.1",
@@ -21,7 +24,23 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "controllers/**/*.js"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ]
   },
   "keywords": [],
   "author": "",
