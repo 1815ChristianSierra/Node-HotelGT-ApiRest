@@ -1,15 +1,13 @@
 const mysql = require('mysql2/promise');
 const db = require('../config/dbconfig');
 
-// GET: obtener todos los usuarios
-async function getUsers() {
+// GET: obtener todas las fotos de una habitación
+async function getPhotosByRoom(room_id) {
     try {
         const connection = await mysql.createConnection(db);
         const [rows] = await connection.query(
-            `SELECT u.id, u.name, u.email, u.rol_id, r.name AS rol_nombre,
-                    u.phone, u.is_active, u.email_verified_at, u.created_at, u.updated_at
-             FROM users u
-             INNER JOIN roles r ON u.rol_id = r.id`
+            "SELECT * FROM room_photos WHERE room_id = ? ORDER BY sort_order ASC",
+            [room_id]
         );
         await connection.end();
         return rows;
@@ -19,16 +17,12 @@ async function getUsers() {
     }
 }
 
-// GET: obtener usuario por Id
-async function getUserById(id) {
+// GET: obtener foto por Id
+async function getPhotoById(id) {
     try {
         const connection = await mysql.createConnection(db);
         const [rows] = await connection.query(
-            `SELECT u.id, u.name, u.email, u.rol_id, r.name AS rol_nombre,
-                    u.phone, u.is_active, u.email_verified_at, u.created_at, u.updated_at
-             FROM users u
-             INNER JOIN roles r ON u.rol_id = r.id
-             WHERE u.id = ?`,
+            "SELECT * FROM room_photos WHERE id = ?",
             [id]
         );
         await connection.end();
@@ -39,14 +33,14 @@ async function getUserById(id) {
     }
 }
 
-// POST: agregar usuario
-async function insertUser(usuario) {
+// POST: agregar foto a habitación
+async function insertPhoto(photo) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            `INSERT INTO users (name, email, password, rol_id, phone, is_active, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-            [usuario.name, usuario.email, usuario.password, usuario.rol_id, usuario.phone, usuario.is_active ?? 1]
+            `INSERT INTO room_photos (room_id, url, caption, is_primary, sort_order, created_at)
+             VALUES (?, ?, ?, ?, ?, NOW())`,
+            [photo.room_id, photo.url, photo.caption ?? null, photo.is_primary ?? 0, photo.sort_order ?? 0]
         );
         await connection.end();
         return result;
@@ -56,15 +50,15 @@ async function insertUser(usuario) {
     }
 }
 
-// PUT: actualizar usuario
-async function updateUser(usuario) {
+// PUT: actualizar foto
+async function updatePhoto(photo) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            `UPDATE users
-             SET name = ?, email = ?, rol_id = ?, phone = ?, is_active = ?, updated_at = NOW()
+            `UPDATE room_photos
+             SET url = ?, caption = ?, is_primary = ?, sort_order = ?
              WHERE id = ?`,
-            [usuario.name, usuario.email, usuario.rol_id, usuario.phone, usuario.is_active, usuario.id]
+            [photo.url, photo.caption, photo.is_primary, photo.sort_order, photo.id]
         );
         await connection.end();
         return result;
@@ -74,12 +68,12 @@ async function updateUser(usuario) {
     }
 }
 
-// DELETE: eliminar usuario por Id
-async function deleteUser(id) {
+// DELETE: eliminar foto por Id
+async function deletePhoto(id) {
     try {
         const connection = await mysql.createConnection(db);
         const [result] = await connection.query(
-            "DELETE FROM users WHERE id = ?",
+            "DELETE FROM room_photos WHERE id = ?",
             [id]
         );
         await connection.end();
@@ -90,4 +84,4 @@ async function deleteUser(id) {
     }
 }
 
-module.exports = { getUsers, getUserById, insertUser, updateUser, deleteUser };
+module.exports = { getPhotosByRoom, getPhotoById, insertPhoto, updatePhoto, deletePhoto };

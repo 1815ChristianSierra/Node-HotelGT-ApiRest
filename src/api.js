@@ -4,13 +4,14 @@ const cors = require('cors');
 
 const rolesRoutes = require('./routes/roles');
 const usersRoutes = require('./routes/usuarios');
-//const roomsRoutes = require('./routes/rooms');
-//const seasonsRoutes = require('./routes/seasons');
-//const reservationsRoutes = require('./routes/reservations');
-//const paymentMethodsRoutes = require('./routes/paymentMethods');
-//const paymentsRoutes = require('./routes/payments');
-//const roomPhotosRoutes = require('./routes/roomPhotos');
-//const notificationsRoutes = require('./routes/notifications');
+const roomsRoutes = require('./routes/habitaciones');
+const seasonsRoutes = require('./routes/temporadas');
+const reservationsRoutes = require('./routes/reservaciones');
+const paymentMethodsRoutes = require('./routes/pagosmetodos');
+const paymentsRoutes = require('./routes/pagos');
+const roomPhotosRoutes = require('./routes/habitacionesfotos');
+const roomSeasonsRoutes = require('./routes/habitacionestemporadas');
+const notificacionesRoutes = require('./routes/notificaciones');
 
 const app = express();
 
@@ -27,13 +28,14 @@ const swaggerUI = require("swagger-ui-express");
 // Montamos las rutas
 app.use('/roles', rolesRoutes);
 app.use('/usuarios', usersRoutes);
-//app.use('/rooms', roomsRoutes);
-//app.use('/seasons', seasonsRoutes);
-//app.use('/reservations', reservationsRoutes);
-//app.use('/paymentMethods', paymentMethodsRoutes);
-//app.use('/payments', paymentsRoutes);
-//app.use('/roomPhotos', roomPhotosRoutes);
-//app.use('/notifications', notificationsRoutes);
+app.use('/rooms', roomsRoutes);
+app.use('/seasons', seasonsRoutes);
+app.use('/reservaciones', reservationsRoutes);
+app.use('/paymentMethods', paymentMethodsRoutes);
+app.use('/payments', paymentsRoutes);
+app.use('/roomPhotos', roomPhotosRoutes);
+app.use('/roomSeasons', roomSeasonsRoutes);
+app.use('/notificaciones', notificacionesRoutes);
 
 const port = process.env.PORT || 8090;
 app.listen(port, () => {
