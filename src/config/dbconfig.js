@@ -1,4 +1,4 @@
-const config = {
+/*const config = {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "csierrae1815_HotelLaravel",
     password: process.env.DB_PASSWORD || "!l3$DrvYn3tg8Sgk",
@@ -7,8 +7,9 @@ const config = {
 };
 
 module.exports = config;
+*/
 
-/*const config = {
+const config = {
     host: "localhost",
     user: "root",
     password: "",
@@ -16,4 +17,4 @@ module.exports = config;
     port: 3306
 };
 
-module.exports = config;*/
+module.exports = config;
